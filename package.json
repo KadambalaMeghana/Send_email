@@ -1,16 +1,19 @@
 {
   "name": "send-email",
   "version": "1.0.0",
-  "description": "",
+  "description": "send-enail",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Meghana",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
+    "express": "^4.17.2",
     "nodemailer": "^6.7.2"
   }
 }
