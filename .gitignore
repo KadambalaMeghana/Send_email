@@ -1,1 +1,17 @@
+# Dependency directories
+node_modules/
+jspm_packages/
+package-lock.json
+
+# Optional npm cache directory
+.npm
+
+# dotenv environment variables file
 .env
+.env.test
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+
+# Gatsby files
+.cache/
