@@ -1,5 +1,5 @@
 const path = require('path');
-const UserModel = require('../model/user.model');
+const UserModel = require('../models/user');
 const moment = require('moment');
 
 let responseObj = {

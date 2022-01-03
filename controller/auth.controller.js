@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const private_key = process.env.PRIVATE_KEY;
 
 console.log('private key ==', private_key);
-const loginModel = require('../model/login.model');
+const loginModel = require('../models/login.model');
 
 let responseObj = {
     "status": "",
