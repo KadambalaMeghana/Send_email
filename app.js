@@ -1,5 +1,9 @@
 const express=require('express');
 const app=express();
+const mongoose  = require('mongoose');
+const PORT = process.env.PORT || 5000;
+const {MONGOURI} = require('./config/keys');
+//A3qSo6RKPtbGhgjq
 const data = require('./data');
 const bodyParser = require('body-parser');
 const expressRate = require('express-rate-limit');
@@ -7,20 +11,34 @@ const xss = require('xss-clean');
 const helmet = require("helmet");
 const mongoSanitize = require('express-mongo-sanitize');
 const cors = require('cors');
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
 const fileUpload = require('express-fileupload');
-require('dotenv').config();
 
+
+
+mongoose.connect(MONGOURI,{
+    useNewUrlParser:true,
+    useUnifiedTopology: true
+
+})
+mongoose.connection.on('connected',()=>{
+    console.log("conneted to mongo yeahh")
+})
+mongoose.connection.on('error',(err)=>{
+    console.log("err connecting",err)
+})
+
+require('dotenv').config();
+require('./models/user')
+require('./models/post')
 
 const apiLimiter = expressRate({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100
 });
-const user = require('./route/user.route');
+const user = require('./routes/user');
 const db = require('./db.js');
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT ||5000;
 const origin = process.env.ORIGIN;
 
 console.log('port is ===', port);
@@ -44,6 +62,11 @@ app.use('/', (req, res, next) => {
     res.send(filteredUsers);
   });
 
+app.use(express.json())
+app.use(require('./routes/auth'))
+app.use(require('./routes/post'))
+app.use(require('./routes/user'))
+
 app.use(function(req, res, next) {
     res.setHeader("Content-Security-Policy", "script-src 'self' https://apis.google.com", "http://localhost:8000");
     return next();
@@ -63,35 +86,13 @@ app.use(fileUpload({
 }));  
 process.env.root_dir = __dirname;
 
-var corsOptions = {
-    origin: 'http://localhost:8000',
-    optionsSuccessStatus: 200, 
-    methods: "GET, POST, PUT, DELETE"
+if(process.env.NODE_ENV=="production"){
+    app.use(express.static('client/build'))
+    const path = require('path')
+    app.get("*",(req,res)=>{
+        res.sendFile(path.resolve(__dirname,'client','build','index.html'))
+    })
 }
-
-app.use(cors(corsOptions));
-
-
-app.use('/user', apiLimiter, user.getRouter());
-
-
-app.get('/cors', (req, res, next) => {
-    res.status(200).send({'msg': "CORS enable for get request"});
-})
-
-app.post('/cors/add', (req, res, next) => {
-    res.status(200).send({'msg': "CORS enable for post request"});
-})
-
-app.put('/cors/update', (req, res, next) => {
-    res.status(200).send({'msg': "CORS enable for update/put request"});
-})
-
-app.delete('/cors/delete', (req, res, next) => {
-    res.status(200).send({'msg': "CORS enable for delete request"});
-})
-
-
 
 
 app.listen(port, () => {
