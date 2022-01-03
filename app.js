@@ -1,13 +1,15 @@
 const express=require('express');
 const app=express();
+require('dotenv').config();
 const mongoose  = require('mongoose');
+console.log(process.env.DATABASE_URL)
 const PORT = process.env.PORT || 5000;
 const {MONGOURI} = require('./config/keys');
 //A3qSo6RKPtbGhgjq
-const data = require('./data');
+
 const bodyParser = require('body-parser');
 const expressRate = require('express-rate-limit');
-const xss = require('xss-clean');
+const xss = require('xss-clean/lib');
 const helmet = require("helmet");
 const mongoSanitize = require('express-mongo-sanitize');
 const cors = require('cors');
@@ -27,7 +29,7 @@ mongoose.connection.on('error',(err)=>{
     console.log("err connecting",err)
 })
 
-require('dotenv').config();
+
 require('./models/user')
 require('./models/post')
 
@@ -37,7 +39,6 @@ const apiLimiter = expressRate({
 });
 const user = require('./routes/user');
 const db = require('./db.js');
-const app = express();
 const port = process.env.PORT ||5000;
 const origin = process.env.ORIGIN;
 
@@ -78,7 +79,6 @@ app.use(express.json({limit: '10kb'}));
 app.use(xss());
 
 app.use(mongoSanitize());
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument)); 
 
 app.use(fileUpload({
     createParentPath: true,
